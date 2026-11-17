@@ -32,7 +32,33 @@ function App() {
   const [foodResults, setFoodResults] = useState([])
   const [foodLoading, setFoodLoading] = useState(false)
   const [foodError, setFoodError] = useState('')
-  
+
+  // Connecting search bar to Flask backend
+  const searchFoods = async () => {
+  if (!foodQuery.trim()) return
+
+  setFoodLoading(true)
+  setFoodError('')
+  setFoodResults([])
+
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:5000/api/food/search?q=${encodeURIComponent(foodQuery)}`
+    )
+
+    if (!response.ok) {
+      throw new Error('Unable to search for foods.')
+    }
+
+    const data = await response.json()
+    setFoodResults(data.results || data)
+  } catch (error) {
+    setFoodError(error.message)
+  } finally {
+    setFoodLoading(false)
+  }
+}
+
   // Fetch glucose data from the Flask backend API when the page loads
   useEffect(() => {
   fetch('http://127.0.0.1:5000/api/glucose')
@@ -249,13 +275,21 @@ function App() {
               <p>Discover what's in your food and make informed choices.</p>
             </div>
 
-            <div className="nutrition-search">
-              <input
-                type="text"
-                placeholder="Search for a food..."
-              />
-              <button>Search</button>
-            </div>
+        <div className="nutrition-search">
+          <input
+            type="text"
+            placeholder="Search for a food..."
+            value={foodQuery}
+            onChange={(e) => setFoodQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') searchFoods()
+           }}
+         />
+
+          <button onClick={searchFoods} disabled={foodLoading}>
+            {foodLoading ? 'Searching...' : 'Search'}
+          </button>
+        </div>
 
             <div className="nutrition-placeholder">
               <span className="tool-icon">𓌉◯𓇋</span>
@@ -266,7 +300,7 @@ function App() {
         )}
 
 {/* Placeholder section for tabs other than 'Home', displaying the active tab's icon and name, along with a back button to return to the home view. */}
-        {activeTab !== 'Home' && (
+        {activeTab !== 'Home' && activeTab !== 'Nutrition' && (
           <section className="placeholder">
             <span className="placeholder-icon">
               {navigation.find(item => item.name === activeTab)?.icon}
