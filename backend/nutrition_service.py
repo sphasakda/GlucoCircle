@@ -7,16 +7,19 @@ def get_food_by_barcode(barcode):
     headers = {
         "User-Agent": "GlucoCircleApp/1.0 (sadphas17@gmail.com)"
     }
-    response = requests.get(url, headers=headers, timeout=10)
-    print("URL:", response.url)
-    print("STATUS:", response.status_code)
-    print("RESPONSE:", response.text[:500])
-    # Set a timeout of 10 seconds for the request to prevent hanging indefinitely in case of network issues or slow responses.
+
+    try:
+        response = requests.get(url, headers=headers, timeout=30)
+        response.raise_for_status()
+        data = response.json()
+    except requests.Timeout:
+        return {"error": "Food database request timed out. Please try again."}
+    except requests.RequestException as error:
+        return {"error": str(error)}
 
     if response.status_code != 200:
         return {"error": f"API request failed with status code {response.status_code}"}
 
-    data = response.json()
     if data.get("status") != "success":
         return {"error": "Product not found"}
 
@@ -56,16 +59,56 @@ def calculate_portion_nutrition(food_info, portion_grams):
         "allergens": food_info.get("allergens"),
     }
 
-if __name__ == "__main__":
-    food_info = get_food_by_barcode("3017620422003")
+#lookup function to search for food items by name using the Open Food Facts API.
+def search_food(query):
+    if not query or not query.strip():
+        return {"error": "Search query cannot be empty"}
 
-calculate_portion_nutrition(food_info, 50)
-calculate_portion_nutrition(food_info, 0)
-calculate_portion_nutrition(food_info, -25)
-calculate_portion_nutrition(food_info, True)
+    url = "https://search.openfoodfacts.org/search"
 
-if __name__ == "__main__":
-    food_info = get_food_by_barcode("3017620422003")
+    params = {
+        "q": query.strip(),
+        "page_size": 5
+    }
 
-    print("FOOD INFO:", food_info)
-    print("25g PORTION:", calculate_portion_nutrition(food_info, 25))
+    headers = {
+        "User-Agent": "GlucoCircle/1.0"
+    }
+
+    try:
+        response = requests.get(
+            url,
+            params=params,
+            headers=headers,
+            timeout=15
+        )
+        response.raise_for_status()
+        data = response.json()
+        hits = data.get("hits", [])
+
+        results = []
+
+        for product in hits:
+            nutriments = product.get("nutriments", {})
+
+            # Skip products without calorie information
+            if nutriments.get("energy-kcal_100g") is None:
+                continue
+
+            results.append({
+                "name": product.get("product_name") or product.get("product_name_en") or "Unknown",
+                "brand": product.get("brands"),
+                "barcode": product.get("code"),
+                "calories": nutriments.get("energy-kcal_100g"),
+                "carbohydrates": nutriments.get("carbohydrates_100g"),
+                "protein": nutriments.get("proteins_100g"),
+                "fat": nutriments.get("fat_100g"),
+                "fiber": nutriments.get("fiber_100g"),
+                "sugars": nutriments.get("sugars_100g"),
+                "image_url": product.get("image_url")
+            })
+
+        return results
+
+    except requests.RequestException as error:
+        return {"error": str(error)}
