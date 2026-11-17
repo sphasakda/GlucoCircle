@@ -12,6 +12,9 @@ function App() {
   const [loading, setLoading] = useState(true)
 
   // Store potential error messages for display to the user
+  const [error, setError] = useState(null)
+
+  // State variable to track the currently active tab in the application, allowing for dynamic content rendering based on user navigation.
   const [activeTab, setActiveTab] = useState('Home')
 
   // Fetch glucose data from the Flask backend API when the page loads
@@ -79,12 +82,23 @@ function App() {
 
 {/* Displaying the latest glucose reading in a prominent format, with the value and unit clearly indicated. */}
               <div className="glucose-reading">
-                <span className="reading-number">118</span>
+              <span className="reading-number">
+                {loading
+                  ? '...'
+                  : error
+                    ? '--'
+                    : glucoseData?.readings?.at(-1)?.value ?? '--'}
+              </span>
+
                 <span className="reading-unit">mg/dL</span>
               </div>
 
               <p className="glucose-note">
-                Here's your latest sample reading.
+                {loading
+                  ? 'Loading your readings...'
+                  : error
+                    ? error
+                    : 'Your latest simulated glucose reading.'}
               </p>
 
               <div className="glucose-footer">
