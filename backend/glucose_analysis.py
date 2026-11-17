@@ -1,3 +1,4 @@
+# Glucose Analysis Functions; Describing the data and providing insights into glucose readings, not diagnosing or treating medical conditions. For medical advice, consult a healthcare professional.
 from statistics import mean, pstdev
 
 
