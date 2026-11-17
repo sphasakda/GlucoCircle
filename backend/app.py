@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from mock_data import generate_glucose_data
+from backend.glucose_analysis import analyze_glucose_readings
 
 # Initialize Flask application
 app = Flask(__name__)
