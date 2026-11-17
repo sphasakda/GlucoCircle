@@ -32,6 +32,11 @@ function App() {
   const [foodResults, setFoodResults] = useState([])
   const [foodLoading, setFoodLoading] = useState(false)
   const [foodError, setFoodError] = useState('')
+// search
+  const [selectedFood, setSelectedFood] = useState(null)
+// Portion calculator
+  const [portionGrams, setPortionGrams] = useState('100')
+  const [portionResult, setPortionResult] = useState(null)
 
   // Connecting search bar to Flask backend
   const searchFoods = async () => {
@@ -56,6 +61,39 @@ function App() {
     setFoodError(error.message)
   } finally {
     setFoodLoading(false)
+  }
+}
+
+// Calculating portions in nutrition
+const calculatePortion = async () => {
+  if (!selectedFood || !portionGrams || Number(portionGrams) <= 0) {
+    return
+  }
+
+  try {
+    const response = await fetch(
+      'http://127.0.0.1:5000/api/food/portion',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          food_info: selectedFood,
+          portion_grams: Number(portionGrams)
+        })
+      }
+    )
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Calculation failed')
+    }
+
+    setPortionResult(data)
+  } catch (error) {
+    console.error(error)
   }
 }
 
@@ -275,6 +313,7 @@ function App() {
               <p>Discover what's in your food and make informed choices.</p>
             </div>
 
+        {/* Nutrition page search bar */}
         <div className="nutrition-search">
           <input
             type="text"
@@ -286,11 +325,66 @@ function App() {
            }}
          />
 
-          <button onClick={searchFoods} disabled={foodLoading}>
-            {foodLoading ? 'Searching...' : 'Search'}
-          </button>
-        </div>
+        <button onClick={searchFoods} disabled={foodLoading}>
+          {foodLoading ? 'Searching...' : 'Search'}
+        </button>
+      </div>
 
+
+        {foodError && (
+          <p className="error-message">{foodError}</p>
+        )}
+
+        {foodResults.length > 0 && (
+          <div className="food-results">
+            {foodResults.map((food) => (
+              <div
+                  className={`food-result-card ${selectedFood?.barcode === food.barcode ? 'selected' : ''}`}
+                  key={food.barcode}
+                  onClick={() => setSelectedFood(food)}
+                >
+                {food.image_url && (
+                  <img src={food.image_url} alt={food.name} />
+                )}
+
+                <div>
+                  <h3>{food.name}</h3>
+                  <p>{Array.isArray(food.brand) ? food.brand.join(', ') : food.brand}</p>
+                </div>
+
+                <div className="food-nutrition">
+                  <p><strong>{food.calories ?? '--'}</strong> kcal</p>
+                  <p>Carbs: {food.carbohydrates ?? '--'}g</p>
+                  <p>Protein: {food.protein ?? '--'}g</p>
+                  <p>Fat: {food.fat ?? '--'}g</p>
+                  <p>Fiber: {food.fiber ?? '--'}g</p>
+                  <p>Sugars: {food.sugars ?? '--'}g</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      
+        {selectedFood && (
+  <div className="portion-calculator">
+    <h3>{selectedFood.name}</h3>
+    <p>Adjust your serving size to see its nutrition information.</p>
+
+    <label>Serving size (grams)</label>
+    <input
+      type="number"
+      min="1"
+      placeholder="Enter grams"
+      value={portionGrams}
+      onChange={(e) => setPortionGrams(e.target.value)}
+    />
+
+    <button onClick={calculatePortion}>
+      Calculate Nutrition
+    </button>
+  </div>
+)}
+        
             <div className="nutrition-placeholder">
               <span className="tool-icon">𓌉◯𓇋</span>
               <h3>What's on your plate?</h3>

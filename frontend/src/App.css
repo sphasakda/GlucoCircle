@@ -500,3 +500,89 @@
   max-width: 450px;
   margin: 12px auto;
 }
+
+/* search results*/
+.food-results {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.food-result-card {
+  background: white;
+  border: 1px solid #e1e9df;
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.food-result-card img {
+  width: 75px;
+  height: 75px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.food-result-card h3 {
+  color: #405b49;
+  margin-bottom: 5px;
+}
+
+.food-result-card p {
+  color: #89938b;
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+.food-nutrition {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.food-nutrition p {
+  background: #f3f5ef;
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: #405b49;
+}
+
+.food-result-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.food-result-card.selected {
+  border: 2px solid #719477;
+  background-color: #f0f5ed;
+}
+
+/* Portions calculator*/
+.portion-calculator {
+  background: white;
+  border: 1px solid #dce5da;
+  border-radius: 20px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.portion-calculator input {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0 18px;
+  border: 1px solid #dce5da;
+  border-radius: 12px;
+}
+
+.portion-calculator button {
+  background: #e5eee3;
+  color: #405b49;
+  border: none;
+  padding: 14px 22px;
+  border-radius: 12px;
+  cursor: pointer;
+}
