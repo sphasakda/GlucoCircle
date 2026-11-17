@@ -37,6 +37,7 @@ function App() {
 // Portion calculator
   const [portionGrams, setPortionGrams] = useState('100')
   const [portionResult, setPortionResult] = useState(null)
+  const [portionError, setPortionError] = useState('')
 
   // Connecting search bar to Flask backend
   const searchFoods = async () => {
@@ -67,8 +68,12 @@ function App() {
 // Calculating portions in nutrition
 const calculatePortion = async () => {
   if (!selectedFood || !portionGrams || Number(portionGrams) <= 0) {
+    setPortionError('Please enter a valid serving size.')
     return
   }
+
+  setPortionError('')
+  setPortionResult(null)
 
   try {
     const response = await fetch(
@@ -92,7 +97,9 @@ const calculatePortion = async () => {
     }
 
     setPortionResult(data)
+
   } catch (error) {
+    setPortionError(error.message)
     console.error(error)
   }
 }
@@ -382,6 +389,46 @@ const calculatePortion = async () => {
     <button onClick={calculatePortion}>
       Calculate Nutrition
     </button>
+    {portionError && (
+  <p className="error-message">{portionError}</p>
+)}
+{portionResult && (
+  <div className="portion-results">
+    <h3>Nutrition for {portionGrams}g</h3>
+
+    <div className="portion-nutrients">
+      <div>
+        <strong>{portionResult.calories ?? '--'}</strong>
+        <span>Calories (kcal)</span>
+      </div>
+
+      <div>
+        <strong>{portionResult.carbohydrates ?? '--'}g</strong>
+        <span>Carbohydrates</span>
+      </div>
+
+      <div>
+        <strong>{portionResult.protein ?? '--'}g</strong>
+        <span>Protein</span>
+      </div>
+
+      <div>
+        <strong>{portionResult.fat ?? '--'}g</strong>
+        <span>Fat</span>
+      </div>
+
+      <div>
+        <strong>{portionResult.fiber ?? '--'}g</strong>
+        <span>Fiber</span>
+      </div>
+
+      <div>
+        <strong>{portionResult.sugars ?? '--'}g</strong>
+        <span>Sugars</span>
+      </div>
+    </div>
+  </div>
+)}
   </div>
 )}
         

@@ -586,3 +586,38 @@
   border-radius: 12px;
   cursor: pointer;
 }
+
+.portion-results {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e1e9df;
+}
+
+.portion-nutrients {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.portion-nutrients div {
+  background: #f3f5ef;
+  padding: 16px;
+  border-radius: 14px;
+}
+
+.portion-nutrients strong,
+.portion-nutrients span {
+  display: block;
+}
+
+.portion-nutrients strong {
+  color: #405b49;
+  font-size: 20px;
+}
+
+.portion-nutrients span {
+  color: #89938b;
+  font-size: 13px;
+  margin-top: 5px;
+}
