@@ -1,4 +1,4 @@
-
+# Mock data for development and testing purposes
 from datetime import datetime, timedelta, timezone
 
 def generate_glucose_data():
