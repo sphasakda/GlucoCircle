@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-// Main App component, which serves as the entry point for the GlucoCircle application.
+// State Declarations
 function App() {
 
   // Store glucose data from Flask backend
@@ -16,6 +16,16 @@ function App() {
 
   // State variable to track the currently active tab in the application, allowing for dynamic content rendering based on user navigation.
   const [activeTab, setActiveTab] = useState('Home')
+
+  // Calculate average glucose from Flask readings
+  const averageGlucose = glucoseData?.readings?.length
+    ? (
+      glucoseData.readings.reduce(
+        (total, reading) => total + reading.glucose,
+        0
+      ) / glucoseData.readings.length
+      ).toFixed(1)
+    : '--'
 
   // Fetch glucose data from the Flask backend API when the page loads
   useEffect(() => {
@@ -79,6 +89,56 @@ function App() {
                 <span className="small-label">YOUR GLUCOSE</span>
                 <span className="status-pill">Sample data</span>
               </div>
+          
+          {/* Average glucose section that displays the calculated average glucose value, with a loading state and a note about the data source. */}
+            <section className="average-card">
+              <p className="small-label">AVERAGE GLUCOSE</p>
+              <h2>
+                {loading ? '...' : averageGlucose}
+                <span> mg/dL</span>
+              </h2>
+              <p>Based on available sample readings</p>
+            </section>
+
+{/* Glucose trend chart */}
+<section className="trend-card">
+  <div className="trend-heading">
+    <div>
+      <h2>Your glucose journey</h2>
+      <p>See how your readings have changed.</p>
+    </div>
+    <span className="trend-badge">Sample data</span>
+  </div>
+
+  <div className="chart-container">
+    {glucoseData?.readings?.length > 1 ? (
+      <svg viewBox="0 0 600 180" className="glucose-chart">
+        <polyline
+          points={glucoseData.readings.map((reading, index, readings) => {
+            const values = readings.map(item => item.glucose)
+            const min = Math.min(...values) - 10
+            const max = Math.max(...values) + 10
+            const x = 20 + (index / (readings.length - 1)) * 560
+            const y = 150 - ((reading.glucose - min) / (max - min)) * 120
+            return `${x},${y}`
+          }).join(' ')}
+          fill="none"
+          stroke="#78977D"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ) : (
+      <p>Loading glucose trends...</p>
+    )}
+  </div>
+
+  <p className="chart-caption">
+    Based on your available simulated readings.
+  </p>
+</section>
+
 
 {/* Displaying the latest glucose reading in a prominent format, with the value and unit clearly indicated. */}
               <div className="glucose-reading">
@@ -87,7 +147,7 @@ function App() {
                   ? '...'
                   : error
                     ? '--'
-                    : glucoseData?.readings?.at(-1)?.value ?? '--'}
+                    : glucoseData?.readings?.at(-1)?.glucose ?? '--'}
               </span>
 
                 <span className="reading-unit">mg/dL</span>

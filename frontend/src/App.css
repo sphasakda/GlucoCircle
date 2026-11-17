@@ -1,4 +1,4 @@
-
+/* Global styles for the GlucoCircle application, ensuring a consistent look and feel across all components. */
 #root {
   min-height: 100vh;
 }
@@ -40,6 +40,7 @@
   font-size: 24px;
 }
 
+/* Profile section in the top bar, displaying the user's avatar and name. */
 .profile {
   display: flex;
   align-items: center;
@@ -88,6 +89,7 @@
   font-size: 14px;
 }
 
+/* Glucose card styles for displaying the user's latest glucose reading and related information in a visually appealing manner. */
 .glucose-card {
   padding: 27px 30px;
   border-radius: 23px;
@@ -110,6 +112,7 @@
   color: #72836f;
 }
 
+/* Glucose reading section, displaying the numeric value and unit of the latest glucose measurement. */
 .glucose-reading {
   display: flex;
   align-items: baseline;
@@ -128,6 +131,7 @@
   color: #718674;
 }
 
+/* Note section for additional information or context related to the glucose reading, styled to be less prominent than the main reading. */
 .glucose-note {
   font-size: 13px;
   color: #657b68;
@@ -143,6 +147,7 @@
   color: #738975;
 }
 
+/* Insight and tools sections, providing users with additional resources and information related to glucose management. */
 .insight-section,
 .tools-section {
   margin-top: 42px;
@@ -167,17 +172,24 @@
   font-size: 12px;
 }
 
-.lumi-icon {
-  display: grid;
-  place-items: center;
-  width: 39px;
-  height: 39px;
-  border-radius: 14px;
-  background: #eee9f5;
-  color: #8a77a8;
-  font-size: 23px;
+/* Mira icon styles for displaying a circular icon with a specific background and color, used in various sections of the app. */
+.mira-icon {
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
+.mira-icon svg {
+  width: 42px;
+  height: 42px;
+  display: block;
+}
 .insight-card {
   padding: 23px;
   border: 1px solid #ecebe4;
@@ -225,9 +237,10 @@
   transform: translateY(-3px);
 }
 
+/* Different background colors for each tool card, providing visual distinction between the various tools available in the app. */
 .tool-card.nutrition { background: #f5eee5; }
 .tool-card.trends { background: #eaf0e9; }
-.tool-card.lumi { background: #f0ebf5; }
+.tool-card.mira { background: #f0ebf5; }
 .tool-card.family { background: #f4eee9; }
 
 .tool-icon {
@@ -256,6 +269,7 @@
   color: #718775;
 }
 
+/* Bottom navigation bar styles, providing a fixed navigation menu at the bottom of the screen for easy access to different sections of the app. */
 .bottom-nav {
   position: fixed;
   z-index: 10;
@@ -320,6 +334,7 @@
   font-size: 13px;
 }
 
+/* Responsive design adjustments for smaller screens, ensuring that the layout remains user-friendly and accessible on mobile devices. */
 @media (max-width: 600px) {
   .topbar {
     padding: 0 20px;
@@ -347,4 +362,83 @@
   .profile span:last-child {
     display: none;
   }
+}
+
+/* Additional styles for the average card and trend card components, enhancing the visual presentation of glucose data and insights. */
+.average-card {
+  margin-top: 14px;
+  padding: 22px 25px;
+  background: #fffefa;
+  border: 1px solid #ecebe4;
+  border-radius: 19px;
+}
+
+.average-card h2 {
+  margin-top: 10px;
+  color: #405c48;
+  font-size: 28px;
+}
+
+.average-card h2 span {
+  font-size: 13px;
+  font-weight: 400;
+  color: #858b82;
+}
+
+.average-card p:last-child {
+  margin-top: 6px;
+  color: #92978f;
+  font-size: 12px;
+}
+
+/* Trend card styles for displaying glucose trends and insights in a visually appealing manner. */
+.trend-card {
+  margin-top: 16px;
+  padding: 24px;
+  background: #fffefa;
+  border: 1px solid #ecebe4;
+  border-radius: 19px;
+}
+
+.trend-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.trend-heading h2 {
+  color: #405c48;
+  font-size: 17px;
+}
+
+.trend-heading p,
+.chart-caption {
+  margin-top: 6px;
+  color: #92978f;
+  font-size: 12px;
+}
+
+.trend-badge {
+  padding: 6px 10px;
+  background: #e8f0e6;
+  color: #54745a;
+  border-radius: 20px;
+  font-size: 10px;
+}
+
+.chart-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.glucose-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chart-caption {
+  margin-top: 12px;
 }
