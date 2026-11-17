@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from backend.mock_data import generate_glucose_data
 from backend.glucose_analysis import analyze_glucose_readings
 from backend.ai_service import ask_claude
@@ -9,6 +10,9 @@ from backend.nutrition_service import (
 
 # Initialize Flask application
 app = Flask(__name__)
+
+# Enable Cross-Origin Resource Sharing for frontend-backend communication
+CORS(app)  
 
 # Test endpoint
 @app.route("/", methods=["GET"])
