@@ -27,6 +27,12 @@ function App() {
       ).toFixed(1)
     : '--'
 
+  // Nutrition declarations
+  const [foodQuery, setFoodQuery] = useState('')
+  const [foodResults, setFoodResults] = useState([])
+  const [foodLoading, setFoodLoading] = useState(false)
+  const [foodError, setFoodError] = useState('')
+  
   // Fetch glucose data from the Flask backend API when the page loads
   useEffect(() => {
   fetch('http://127.0.0.1:5000/api/glucose')
@@ -232,6 +238,31 @@ function App() {
               </div>
             </section>
           </>
+        )}
+
+        {/* Intial Nutrition page layout */}
+              {activeTab === 'Nutrition' && (
+          <section className="nutrition-page">
+            <div className="page-heading">
+              <p className="small-label">FOOD & WELLNESS</p>
+              <h2>Explore Nutrition</h2>
+              <p>Discover what's in your food and make informed choices.</p>
+            </div>
+
+            <div className="nutrition-search">
+              <input
+                type="text"
+                placeholder="Search for a food..."
+              />
+              <button>Search</button>
+            </div>
+
+            <div className="nutrition-placeholder">
+              <span className="tool-icon">𓌉◯𓇋</span>
+              <h3>What's on your plate?</h3>
+              <p>Search for foods to explore calories, carbohydrates, protein, and more.</p>
+            </div>
+          </section>
         )}
 
 {/* Placeholder section for tabs other than 'Home', displaying the active tab's icon and name, along with a back button to return to the home view. */}

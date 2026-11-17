@@ -442,3 +442,61 @@
 .chart-caption {
   margin-top: 12px;
 }
+
+/* Nutrition page */
+.nutrition-page {
+  padding: 30px;
+  color: #405b49;
+}
+
+.page-heading {
+  margin-bottom: 28px;
+}
+
+.page-heading h2 {
+  font-size: 28px;
+  margin: 8px 0;
+}
+
+.page-heading p {
+  color: #89938b;
+}
+
+.nutrition-search {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.nutrition-search input {
+  flex: 1;
+  padding: 15px 18px;
+  border: 1px solid #dce5da;
+  border-radius: 14px;
+  background: white;
+  font-size: 15px;
+}
+
+.nutrition-search button {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 14px;
+  background: #e5eee3;
+  color: #405b49;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.nutrition-placeholder {
+  background: #f3f2eb;
+  border-radius: 24px;
+  padding: 60px 25px;
+  text-align: center;
+  color: #405b49;
+}
+
+.nutrition-placeholder p {
+  color: #89938b;
+  max-width: 450px;
+  margin: 12px auto;
+}
