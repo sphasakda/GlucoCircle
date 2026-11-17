@@ -17,7 +17,7 @@ def get_food_by_barcode(barcode):
         return {"error": f"API request failed with status code {response.status_code}"}
 
     data = response.json()
-    if data.get("status") != 1:
+    if data.get("status") != "success":
         return {"error": "Product not found"}
 
 # Extract relevant nutritional information from the API response
