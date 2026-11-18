@@ -1,6 +1,7 @@
 // frontend/src/App.jsx
 import { useState, useEffect } from 'react'
 import './App.css'
+import ReactMarkdown from 'react-markdown'
 
 // State Declarations
 function App() {
@@ -38,6 +39,12 @@ function App() {
   const [portionGrams, setPortionGrams] = useState('100')
   const [portionResult, setPortionResult] = useState(null)
   const [portionError, setPortionError] = useState('')
+
+// Mira state declarations
+  const [chatMessage, setChatMessage] = useState('')
+  const [chatHistory, setChatHistory] = useState([])
+  const [chatLoading, setChatLoading] = useState(false)
+  const [chatError, setChatError] = useState('')
 
   // Connecting search bar to Flask backend
   const searchFoods = async () => {
@@ -101,6 +108,50 @@ const calculatePortion = async () => {
   } catch (error) {
     setPortionError(error.message)
     console.error(error)
+  }
+}
+// Mira chat functions
+const sendMessage = async () => {
+  if (!chatMessage.trim() || chatLoading) return
+
+  const userMessage = chatMessage.trim()
+
+  setChatHistory(prev => [
+    ...prev,
+    { role: 'user', content: userMessage }
+  ])
+
+  setChatMessage('')
+  setChatLoading(true)
+  setChatError('')
+
+  try {
+    const response = await fetch(
+      'http://127.0.0.1:5000/api/ask',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: userMessage })
+      }
+    )
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Mira could not respond.')
+    }
+
+    setChatHistory(prev => [
+      ...prev,
+      { role: 'assistant', content: data.reply }
+    ])
+
+  } catch (error) {
+    setChatError(error.message)
+  } finally {
+    setChatLoading(false)
   }
 }
 
@@ -372,6 +423,7 @@ const calculatePortion = async () => {
           </div>
         )}
       
+{/*Portion calculator */}
         {selectedFood && (
   <div className="portion-calculator">
     <h3>{selectedFood.name}</h3>
@@ -431,17 +483,65 @@ const calculatePortion = async () => {
 )}
   </div>
 )}
-        
-            <div className="nutrition-placeholder">
-              <span className="tool-icon">𓌉◯𓇋</span>
-              <h3>What's on your plate?</h3>
-              <p>Search for foods to explore calories, carbohydrates, protein, and more.</p>
+
+        <div className="nutrition-placeholder">
+          <span className="tool-icon">𓌉◯𓇋</span>
+          <h3>What's on your plate?</h3>
+          <p>Search for foods to explore calories, carbohydrates, protein, and more.</p>
+        </div>
+      </section>
+      )}
+
+{/* Mira chat page */}
+        {activeTab === 'Mira' && (
+          <section className="mira-page">
+            <div className="mira-welcome">
+              <span className="mira-avatar">₍^. .^₎Ⳋ</span>
+              <h2>Hi, I'm Mira!</h2>
+              <p>Your friendly diabetes support companion.</p>
+              <p>Ask me about glucose patterns, nutrition, or everyday wellness.</p>
+            </div>
+
+            <div className="chat-messages">
+              {chatHistory.map((message, index) => (
+                <div
+                  key={index}
+                  className={`chat-message ${message.role}`}
+                >
+                  <strong>
+                    {message.role === 'user' ? 'You' : 'Mira ₍^. .^₎Ⳋ'}
+                  </strong>
+                 <div className="chat-response">
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                </div>
+                </div>
+              ))}
+
+              {chatLoading && <p>Mira is thinking...</p>}
+            </div>
+
+            {chatError && <p className="error-message">{chatError}</p>}
+
+            <div className="chat-input">
+              <input
+                value={chatMessage}
+                onChange={e => setChatMessage(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') sendMessage()
+                }}
+                placeholder="Ask Mira something..."
+              />
+              <button onClick={sendMessage} disabled={chatLoading}>
+                Send
+              </button>
             </div>
           </section>
         )}
 
 {/* Placeholder section for tabs other than 'Home', displaying the active tab's icon and name, along with a back button to return to the home view. */}
-        {activeTab !== 'Home' && activeTab !== 'Nutrition' && (
+        {activeTab !== 'Home' &&
+        activeTab !== 'Nutrition' &&
+        activeTab !== 'Mira' && (
           <section className="placeholder">
             <span className="placeholder-icon">
               {navigation.find(item => item.name === activeTab)?.icon}
