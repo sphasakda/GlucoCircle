@@ -4,7 +4,7 @@ To try GlucoCircle locally:
 
 1. Download the project
 
-git clone <YOUR_REPOSITORY_LINK>
+git clone <(https://github.com/sphasakda/GlucoCircle)>
 cd GlucoCircle
 
 2. Set up the backend
