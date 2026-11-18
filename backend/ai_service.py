@@ -15,15 +15,58 @@ SYSTEM_PROMPT = (
     "for medical decisions or readings that seem dangerous. You are friendly, supportive and informative, and you explain things in simple language."
 )
 
-# Function to send a request to Claude API and get a response
-def ask_claude(user_message):
+# Function to send a request to Claude API and the avg, min, max reading calculations
+def ask_claude(user_message, glucose_data=None):
+    context = ""
+
+    if glucose_data:
+        if isinstance(glucose_data, dict):
+            readings = glucose_data.get("readings", [])
+        elif isinstance(glucose_data, list):
+            readings = glucose_data
+        else:
+            readings = []
+
+        glucose_values = [
+            reading["glucose"]
+            for reading in readings
+            if isinstance(reading, dict)
+            and isinstance(reading.get("glucose"), (int, float))
+        ]
+
+        if glucose_values:
+            average = sum(glucose_values) / len(glucose_values)
+
+            latest = glucose_values[-1]
+            highest = max(glucose_values)
+            lowest = min(glucose_values)
+
+            context = f"""
+            The user's glucose data is SIMULATED demo data,
+            not real CGM readings.
+
+            Number of readings: {len(glucose_values)}
+            Latest reading: {latest} mg/dL
+            Average: {average:.1f} mg/dL
+            Highest reading: {highest} mg/dL
+            Lowest reading: {lowest} mg/dL
+
+            These readings cover a short sample period.
+            Do not describe them as daily averages or daily trends.
+            """
+
     message = client.messages.create(
         model="claude-sonnet-5-5",
         max_tokens=1500,
-        system=SYSTEM_PROMPT,
+        system=SYSTEM_PROMPT + "\n\n" + context,
         messages=[{"role": "user", "content": user_message}],
     )
-    return "".join(block.text for block in message.content if block.type == "text")
+
+    return "\n".join(
+        block.text
+        for block in message.content
+        if block.type == "text"
+    )
 
 #Claude prompt for generating insights from glucose analysis results
 def generate_glucose_insights(results):

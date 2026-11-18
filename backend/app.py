@@ -105,7 +105,8 @@ def ask():
     if not user_message:
         return jsonify({"error": "message is required"}), 400
     try:
-        reply = ask_claude(user_message)
+        glucose_data = generate_glucose_data()
+        reply = ask_claude(user_message, glucose_data)
         return jsonify({"reply": reply})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
