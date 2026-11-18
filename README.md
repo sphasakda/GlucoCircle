@@ -48,7 +48,7 @@ Before getting started, make sure you have:
 Open your terminal and run:
 
 ```bash
-git clone <https://github.com/sphasakda/GlucoCircle>
+git clone https://github.com/sphasakda/GlucoCircle
 cd GlucoCircle
 ```
 
